@@ -58,17 +58,19 @@ output: movie info
 @dp.message(Options.get_by_name)
 async def find_by_name(message: types.Message, state: FSMContext):
     name, movie_info, url = film_info.get_by_title(message)
-    if url == None:
+    if not url:
         await bot.send_message(message.chat.id, movie_info)
         RequiredInfo.required_name = ""
-    await bot.send_photo(message.chat.id, photo=url, caption=movie_info)
-    RequiredInfo.required_name = name
-    await state.clear()
+        await bot.send_message(message.chat.id, text.restart)
+    else:
+        await bot.send_photo(message.chat.id, photo=url, caption=movie_info)
+        RequiredInfo.required_name = name
 
-    await message.answer(
-        "\U00002753Что дальше?",
+        await message.answer(
+        "\U00002753Что дальше",
         reply_markup=kb.additional_options_kb.as_markup()     
-    )
+        )
+    await state.clear()
 
 
 """
@@ -86,18 +88,22 @@ output: list of Top-10 movies by country            конопочки: номе
 """
 @dp.message(Options.top_country)
 async def country_top_10(message: types.Message, state: FSMContext):
-    info, RequiredInfo.top = country_info.get_by_country(message.text)
-    top_keyboard = InlineKeyboardBuilder()
-    for i in range(0, len(RequiredInfo.top), 2):
-        first_button = types.InlineKeyboardButton(text=f"{i+1}", callback_data=RequiredInfo.top[i]) 
-        second_button = types.InlineKeyboardButton(text=f"{i+2}", callback_data=RequiredInfo.top[i+1]) 
-        top_keyboard.row(first_button, second_button)
-    if len(RequiredInfo.top)%2:
-        top_keyboard.add(types.InlineKeyboardButton(text=f"{len(RequiredInfo.top)}", callback_data=RequiredInfo.top[-1]))
-    await message.answer(
-        info,
-        reply_markup=top_keyboard.as_markup()     
-    )
+    flag, info, RequiredInfo.top = country_info.get_by_country(message.text)
+    if flag == 0:
+        await message.answer(info)
+        await message.answer(text.restart)
+    else:
+        top_keyboard = InlineKeyboardBuilder()
+        for i in range(0, len(RequiredInfo.top), 2):
+            first_button = types.InlineKeyboardButton(text=f"{i+1}", callback_data=RequiredInfo.top[i]) 
+            second_button = types.InlineKeyboardButton(text=f"{i+2}", callback_data=RequiredInfo.top[i+1]) 
+            top_keyboard.row(first_button, second_button)
+        if len(RequiredInfo.top)%2:
+            top_keyboard.add(types.InlineKeyboardButton(text=f"{len(RequiredInfo.top)}", callback_data=RequiredInfo.top[-1]))
+        await message.answer(
+            info,
+            reply_markup=top_keyboard.as_markup()     
+        )
     await state.clear()
 
 @dp.callback_query(lambda c: c.data in RequiredInfo.top)
@@ -108,6 +114,7 @@ async def get_from_top_by_name(callback: types.CallbackQuery, state: FSMContext)
     if url == None:
         await callback.message(movie_info)
         RequiredInfo.required_name = ""
+        await callback.message.answer(text.restart)
     await callback.message.answer_photo(photo=url, caption=movie_info)
     await state.clear()
 
@@ -132,18 +139,22 @@ output: list of Top-10 movies by genre
 """
 @dp.message(Options.top_genre)
 async def genre_top_10(message: types.Message, state: FSMContext):
-    info, RequiredInfo.top = genre_info.get_by_genre(message.text)
-    top_keyboard = InlineKeyboardBuilder()
-    for i in range(0, len(RequiredInfo.top), 2):
-        first_button = types.InlineKeyboardButton(text=f"{i+1}", callback_data=RequiredInfo.top[i]) 
-        second_button = types.InlineKeyboardButton(text=f"{i+2}", callback_data=RequiredInfo.top[i+1]) 
-        top_keyboard.row(first_button, second_button)
-    if len(RequiredInfo.top)%2:
-        top_keyboard.add(types.InlineKeyboardButton(text=f"{len(RequiredInfo.top)}", callback_data=RequiredInfo.top[-1]))
-    await message.answer(
-        info,
-        reply_markup=top_keyboard.as_markup()     
-    )
+    flag, info, RequiredInfo.top = genre_info.get_by_genre(message.text)
+    if flag == 0:
+        await message.answer(info)
+        await message.answer(text.restart)
+    else:
+        top_keyboard = InlineKeyboardBuilder()
+        for i in range(0, len(RequiredInfo.top), 2):
+            first_button = types.InlineKeyboardButton(text=f"{i+1}", callback_data=RequiredInfo.top[i]) 
+            second_button = types.InlineKeyboardButton(text=f"{i+2}", callback_data=RequiredInfo.top[i+1]) 
+            top_keyboard.row(first_button, second_button)
+        if len(RequiredInfo.top)%2:
+            top_keyboard.add(types.InlineKeyboardButton(text=f"{len(RequiredInfo.top)}", callback_data=RequiredInfo.top[-1]))
+        await message.answer(
+            info,
+            reply_markup=top_keyboard.as_markup()     
+        )
     await state.clear()
 
 
@@ -169,6 +180,15 @@ async def send_name(callback: types.CallbackQuery, state: FSMContext):
         reply_markup=links_final.as_markup()        
     )
     RequiredInfo.required_name = ""
+    await callback.message.answer(text.restart)
+
+"""restart command"""
+@dp.message(Command("restart"))
+async def restart_function(message: types.Message):
+    await message.answer(
+        "\U00002753Выбери, что ты хочешь найти:", 
+        reply_markup=kb.options_kb.as_markup()        
+    )
 
 """processing restart request"""
 @dp.callback_query(lambda c: c.data ==  "restart")
