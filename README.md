@@ -1,10 +1,21 @@
 # CinemaBot
-Later here's gonna be our CinemaBot project╰(● ⋏ ●)╯
+Наш Cinemabot!╰(● ⋏ ●)╯
 
 ![](CoverPhoto.jpg)
 
-We're going to work on a Telegram Bot, which will search for films and series and will provide the users with all necessary information about everything they want to watch: its poster, ratings and several links (or video - it will be decided later) where you'll be able to watch it online.
+Доступны 3 опции:
+-> Вывод информации о фильме / сериале / мультфильме. По желанию пользователя - вывод ссылки на фильм (Ivi и/или LordFilms)
+-> Вывод топ-10 фильмов по введённому жанру. По желанию пользователя - вывод информации об одном из них
+-> Вывод топ-10 фильмов по введённой стране. По желанию пользователя - вывод информации об одном из них
 
-The benefits for users: no need to observe all websites in order to find the film they want to watch.
+В работе использовали:
+- aiogram для создания бота
+- scrapy для парсинга
+- postgreSQL для создания и работы с БД
+
+Проделанная работа:
+Рената: разработка бота и пользовательский интерфейс + красота файлики
+Хелена: парсинг, создание БД и работа с запросами в БД + душевность файликов
+Катя:
 
 Follow us for more(⁀ᗢ⁀)
