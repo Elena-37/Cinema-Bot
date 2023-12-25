@@ -40,9 +40,9 @@ class country_info():
                 connection.close()
                 logger.info("PostgreSQL connection closed")
             
-        if result == None:
-            logger.info("No films of this genre have been found")
-            return f"Такой страны у меня нет"
+        if not result:
+            logger.info("No films from this country have been found")
+            return 0, f"Такой страны у меня нет", []
 
         if (len(result) >= 10):
             t = 10
@@ -61,4 +61,4 @@ class country_info():
             keyboard_info.append(result[i][0])
 
         logger.info("Top from this country have been created successfully")
-        return list_of_strings, keyboard_info
+        return 1, list_of_strings, keyboard_info
