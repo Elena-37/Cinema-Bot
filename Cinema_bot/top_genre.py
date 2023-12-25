@@ -41,9 +41,9 @@ class genre_info():
                 connection.close()
                 logger.info("PostgreSQL connection closed")
             
-        if result == None:
+        if not result:
             logger.info("No films of this genre have been found")
-            return f"Такого жанра у меня нет"
+            return 0, f"Такого жанра у меня нет", []
 
         else:
             if (len(result) >= 10):
@@ -63,5 +63,5 @@ class genre_info():
                 keyboard_info.append(result[i][0])
             
             logger.info("Top of this genres have been created successfully")
-            return list_of_strings, keyboard_info
+            return 1, list_of_strings, keyboard_info
         
